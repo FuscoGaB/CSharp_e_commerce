@@ -10,9 +10,11 @@ namespace e_commerce_carrello_lista
 {
     public partial class Form1 : Form
     {
+        //dove c'è scritto nome prodotto mi riferisco al suo id.
+
+        private double pFinale = 0;
         private double ptot = 0;
         Carrello c;
-        int conta = 0;
         public Form1()
         {
             InitializeComponent();
@@ -33,11 +35,20 @@ namespace e_commerce_carrello_lista
         {
             //non aggiunge prodotti "invisibili"
             if (textBox1.Text == "")
+            {
+                MessageBox.Show("inserisci nome prodotto.");
                 return;
+            }
 
             // Recupera l'ID dal TextBox
             string prodottoId = textBox1.Text;
             Prodotto p = null;
+
+            if (comboBox1.SelectedItem == null)
+            {
+                MessageBox.Show("seleziona un tipo di prodotto.");
+                return;
+            }
 
             // Recupera il tipo di prodotto selezionato dalla ComboBox
             string tipoProdotto = comboBox1.SelectedItem.ToString();
@@ -52,44 +63,102 @@ namespace e_commerce_carrello_lista
                 p = new ProdottoAlimentare(prodottoId, "ModelloAlimentare", "MarcaAlimentare", 100);
             }
 
-            // Se il prodotto è stato creato
             if (p != null)
             {
-                // Calcola lo sconto applicato
                 double sconto = p.CalcolaSconto();
-                double prezzoFinale = p.Prezzo - sconto;
-                ptot += prezzoFinale;
+                double prezzoSconto = p.Prezzo - sconto;
+                ptot += prezzoSconto;
+                pFinale += p.Prezzo;
 
-                // Aggiunge il prodotto al carrello
-                c.aggiungiProdotto(p);
-                ListaCarrello.Items.Add(p.Id);
-                textBox1.Text = "";
-                aggiornaPrezzoProdotti();
-                aggiornaNumeroProdotti();
+                bool prodottoEsistente = false;
+                foreach (Prodotto prodotto in c.Lista)
+                {
+                    if (prodotto.Id == p.Id)
+                    {
+                        prodottoEsistente = true;
+                        break;
+                    }
+                }
+
+                if (prodottoEsistente)
+                {
+                    MessageBox.Show($"Il prodotto con nome '{p.Id}' è già nel carrello.");
+                }
+                else
+                {
+                    c.aggiungiProdotto(p);
+                    ListaCarrello.Items.Add(p.Id);
+                    textBox1.Text = "";
+                    aggiornaPrezzoProdotti();
+                    aggiornaNumeroProdotti();
+                }
             }
-
-            conta++;
         }
 
         private void rimuovi_Click(object sender, EventArgs e)
         {
+            Prodotto prodottoDaRimuovere = null;
+
+            if (textBox1.Text == "")
+            {
+                MessageBox.Show("seleziona o inserisci nome prodotto.");
+                return;
+            }
+
+            if (comboBox1.SelectedItem == null)
+            {
+                MessageBox.Show("seleziona un tipo di prodotto.");
+                return;
+            }
+
+            // Rimuovi in base al testo nella TextBox
             // Rimuovi in base al testo nella TextBox
             if (!string.IsNullOrEmpty(textBox1.Text))
             {
-                Prodotto p = new Prodotto(textBox1.Text, "modello", "marca", 2);
-                c.rimuoviProdotto(p);
-                ListaCarrello.Items.Remove(textBox1.Text);
-                textBox1.Text = "";
-            }
+                foreach (Prodotto p in c.Lista)
+                {
+                    if (p.Id == textBox1.Text)
+                    {
+                        prodottoDaRimuovere = p;
+                        break;
+                    }
+                }
 
+                if (prodottoDaRimuovere != null)
+                {
+                    c.rimuoviProdotto(prodottoDaRimuovere);
+                    ListaCarrello.Items.Remove(textBox1.Text);
+                    textBox1.Text = "";
+                }
+            }
             // Rimuovi elemento selezionato nella ListBox
             else if (ListaCarrello.SelectedItem != null)
             {
                 string selezionato = ListaCarrello.SelectedItem.ToString();
-                Prodotto p = new Prodotto(selezionato, "modello", "marca", 2);
-                aggiornaPrezzoProdotti();
-                c.rimuoviProdotto(p);
-                ListaCarrello.Items.Remove(selezionato);
+                foreach (Prodotto p in c.Lista)
+                {
+                    if (p.Id == selezionato)
+                    {
+                        prodottoDaRimuovere = p;
+                        break;
+                    }
+                }
+
+                if (prodottoDaRimuovere != null)
+                {
+                    c.rimuoviProdotto(prodottoDaRimuovere);
+                    ListaCarrello.Items.Remove(selezionato);
+                }
+            }
+
+            if (prodottoDaRimuovere != null)
+            {
+                // Aggiorna i prezzi del carrello
+                double sconto = prodottoDaRimuovere.CalcolaSconto();
+                double prezzoSconto = prodottoDaRimuovere.Prezzo - sconto;
+
+                ptot -= prezzoSconto;
+                pFinale -= prodottoDaRimuovere.Prezzo;
             }
 
             // Verifica se il carrello è vuoto
@@ -98,6 +167,7 @@ namespace e_commerce_carrello_lista
                 MessageBox.Show("Il carrello è vuoto.");
             }
 
+            aggiornaPrezzoProdotti();
             aggiornaNumeroProdotti();
         }
 
@@ -105,29 +175,52 @@ namespace e_commerce_carrello_lista
         {
             c.svuotaProdotti();
 
-            conta = 0;
             if (ListaCarrello.Items.Count == 0)
             {
-                MessageBox.Show("lista gia' vuota.");
+                MessageBox.Show("carrello gia' vuoto.");
             }
             else
             {
                 ListaCarrello.Items.Clear();
-                MessageBox.Show("E' stato svuotato il carrello.");
+                MessageBox.Show("È stato svuotato il carrello.");
             }
 
             ptot = 0;
+            pFinale = 0;
             aggiornaPrezzoProdotti();
             aggiornaNumeroProdotti();
         }
         private void aggiornaNumeroProdotti()
         {
-            n_prodotti.Text = $"Hai {ListaCarrello.Items.Count} prodotti nel carrello.";
+            if (ListaCarrello.Items.Count == 1)
+            {
+                n_prodotti.Text = $"Hai {ListaCarrello.Items.Count} prodotto nel carrello.";
+            }
+            else if (ListaCarrello.Items.Count > 1)
+            {
+                n_prodotti.Text = $"Hai {ListaCarrello.Items.Count} prodotti nel carrello.";
+            }
+            else
+            {
+                n_prodotti.Text = "Il carrello e' vuoto.";
+            }
         }
+
 
         private void aggiornaPrezzoProdotti()
         {
             PrezzoP.Text = $"{ptot}$";
+            prezzo_tot.Text = $"{pFinale}$";
+        }
+
+        private void prezzo_tot_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void ListaCarrello_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
         }
     }
 }

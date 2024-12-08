@@ -9,7 +9,12 @@ namespace CarrelloLista
 {
     internal class Carrello
     {
+        // Creazione list lista di tipo prodotto
         private List<Prodotto> lista = new List<Prodotto>();
+        public List<Prodotto> Lista
+        {
+            get { return lista; }
+        }
 
         private String id;
         public String Id
