@@ -36,6 +36,19 @@ namespace CarrelloLista
 
         public void rimuoviProdotto(Prodotto p)
         {
+            /*Prodotto prodottoDaRimuovere = null;
+            foreach (Prodotto p in lista)
+            {
+                if (p.Id == prodotto.Id)
+                {
+                    prodottoDaRimuovere = p;
+                    break;
+                }
+            }
+
+            if (prodottoDaRimuovere != null)
+                lista.Remove(prodottoDaRimuovere);
+            */
             int trovato;
             trovato = lista.IndexOf(p);
             if (trovato != -1) lista.RemoveAt(trovato);

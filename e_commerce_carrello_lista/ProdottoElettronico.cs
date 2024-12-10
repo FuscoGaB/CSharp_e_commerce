@@ -8,13 +8,12 @@ namespace CarrelloLista
 {
     internal class ProdottoElettronico : Prodotto
     {
-        public ProdottoElettronico(string id, string modello, string marca, double prezzo)
-        : base(id, modello, marca, prezzo) { }
+        public ProdottoElettronico(string id, string modello, string marca, double prezzo) : base(id, modello, marca, prezzo) { }
 
         //sovrascrizione del metodo della classe padre
         public override double CalcolaSconto()
         {
-            return Prezzo * 0.20;
+            return Prezzo * 0.10;
         }
 
     }

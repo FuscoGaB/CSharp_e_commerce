@@ -10,10 +10,8 @@ namespace e_commerce_carrello_lista
 {
     public partial class Form1 : Form
     {
-        //dove c'è scritto nome prodotto mi riferisco al suo id.
-
         private double pFinale = 0;
-        private double ptot = 0;
+        private double pScontato = 0;
         Carrello c;
         public Form1()
         {
@@ -40,7 +38,6 @@ namespace e_commerce_carrello_lista
                 return;
             }
 
-            // Recupera l'ID dal TextBox
             string prodottoId = textBox1.Text;
             Prodotto p = null;
 
@@ -50,7 +47,6 @@ namespace e_commerce_carrello_lista
                 return;
             }
 
-            // Recupera il tipo di prodotto selezionato dalla ComboBox
             string tipoProdotto = comboBox1.SelectedItem.ToString();
 
             // Crea il prodotto in base al tipo selezionato
@@ -67,7 +63,7 @@ namespace e_commerce_carrello_lista
             {
                 double sconto = p.CalcolaSconto();
                 double prezzoSconto = p.Prezzo - sconto;
-                ptot += prezzoSconto;
+                pScontato += prezzoSconto;
                 pFinale += p.Prezzo;
 
                 bool prodottoEsistente = false;
@@ -99,21 +95,8 @@ namespace e_commerce_carrello_lista
         {
             Prodotto prodottoDaRimuovere = null;
 
-            if (textBox1.Text == "")
-            {
-                MessageBox.Show("seleziona o inserisci nome prodotto.");
-                return;
-            }
-
-            if (comboBox1.SelectedItem == null)
-            {
-                MessageBox.Show("seleziona un tipo di prodotto.");
-                return;
-            }
-
-            // Rimuovi in base al testo nella TextBox
-            // Rimuovi in base al testo nella TextBox
-            if (!string.IsNullOrEmpty(textBox1.Text))
+            // Rimuove in base al testo nella TextBox
+            if (textBox1.Text != null && textBox1.Text != "")
             {
                 foreach (Prodotto p in c.Lista)
                 {
@@ -131,7 +114,8 @@ namespace e_commerce_carrello_lista
                     textBox1.Text = "";
                 }
             }
-            // Rimuovi elemento selezionato nella ListBox
+
+            // Rimuove elemento selezionato nella ListBox
             else if (ListaCarrello.SelectedItem != null)
             {
                 string selezionato = ListaCarrello.SelectedItem.ToString();
@@ -139,7 +123,7 @@ namespace e_commerce_carrello_lista
                 {
                     if (p.Id == selezionato)
                     {
-                        prodottoDaRimuovere = p;
+                        prodottoDaRimuovere = p;// Lo assegno quindi fanno riferimanto allo stesso oggetto
                         break;
                     }
                 }
@@ -150,18 +134,17 @@ namespace e_commerce_carrello_lista
                     ListaCarrello.Items.Remove(selezionato);
                 }
             }
-
+            
+            // Aggiorna i prezzi del carrello
             if (prodottoDaRimuovere != null)
-            {
-                // Aggiorna i prezzi del carrello
+            { 
                 double sconto = prodottoDaRimuovere.CalcolaSconto();
                 double prezzoSconto = prodottoDaRimuovere.Prezzo - sconto;
 
-                ptot -= prezzoSconto;
+                pScontato -= prezzoSconto;
                 pFinale -= prodottoDaRimuovere.Prezzo;
             }
 
-            // Verifica se il carrello è vuoto
             if (ListaCarrello.Items.Count == 0)
             {
                 MessageBox.Show("Il carrello è vuoto.");
@@ -185,7 +168,7 @@ namespace e_commerce_carrello_lista
                 MessageBox.Show("È stato svuotato il carrello.");
             }
 
-            ptot = 0;
+            pScontato = 0;
             pFinale = 0;
             aggiornaPrezzoProdotti();
             aggiornaNumeroProdotti();
@@ -209,7 +192,7 @@ namespace e_commerce_carrello_lista
 
         private void aggiornaPrezzoProdotti()
         {
-            PrezzoP.Text = $"{ptot}$";
+            PrezzoP.Text = $"{pScontato}$";
             prezzo_tot.Text = $"{pFinale}$";
         }
 
@@ -221,6 +204,11 @@ namespace e_commerce_carrello_lista
         private void ListaCarrello_SelectedIndexChanged(object sender, EventArgs e)
         {
 
+        }
+
+        private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            
         }
     }
 }
