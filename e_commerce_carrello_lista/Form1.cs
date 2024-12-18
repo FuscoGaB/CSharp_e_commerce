@@ -13,6 +13,7 @@ namespace e_commerce_carrello_lista
         private double pFinale = 0;
         private double pScontato = 0;
         Carrello c;
+        private string TTipo = "";
         public Form1()
         {
             InitializeComponent();
@@ -29,7 +30,7 @@ namespace e_commerce_carrello_lista
 
         }
 
-        private void aggiungi_Click(object sender, EventArgs e)
+        public void aggiungi_Click(object sender, EventArgs e)
         {
             //non aggiunge prodotti "invisibili"
             if (textBox1.Text == "")
@@ -52,11 +53,14 @@ namespace e_commerce_carrello_lista
             // Crea il prodotto in base al tipo selezionato
             if (tipoProdotto == "Elettronico")
             {
-                p = new ProdottoElettronico(prodottoId, "ModelloElettronico", "MarcaElettronico", 100);
+                p = new ProdottoElettronico(prodottoId, " -E", "MarcaElettronico", 100);
+                TTipo = "Elettronico";
+
             }
             else if (tipoProdotto == "Alimentare")
             {
-                p = new ProdottoAlimentare(prodottoId, "ModelloAlimentare", "MarcaAlimentare", 100);
+                p = new ProdottoAlimentare(prodottoId, " -A", "MarcaAlimentare", 100);
+                TTipo = "Alimentare";
             }
 
             if (p != null)
@@ -134,10 +138,10 @@ namespace e_commerce_carrello_lista
                     ListaCarrello.Items.Remove(selezionato);
                 }
             }
-            
+
             // Aggiorna i prezzi del carrello
             if (prodottoDaRimuovere != null)
-            { 
+            {
                 double sconto = prodottoDaRimuovere.CalcolaSconto();
                 double prezzoSconto = prodottoDaRimuovere.Prezzo - sconto;
 
@@ -194,8 +198,65 @@ namespace e_commerce_carrello_lista
         {
             PrezzoP.Text = $"{pScontato}$";
             prezzo_tot.Text = $"{pFinale}$";
+            prezzosingolo();
+            aggiornaTipo();
         }
+        private void prezzosingolo()
+        {
+            if (ListaCarrello.SelectedItem == null)
+            {
+                prezzoPScontato.Text = "non selez.";
+                prezzoPSingolo.Text = "non selez.";
+                return;
+            }
 
+            string selezionato = ListaCarrello.SelectedItem.ToString();
+
+            if (selezionato != null)
+            { 
+                foreach (Prodotto p in c.Lista)
+                {
+                    if (p.Id == selezionato) 
+                    {
+                        double sconto = p.CalcolaSconto();
+                        double prezzoScontato = p.Prezzo - sconto;
+
+                        prezzoPScontato.Text = $"{prezzoScontato}";
+                        prezzoPSingolo.Text = $"{p.Prezzo}";
+                        return;
+                    }
+                }
+            }
+            
+        }
+        private void aggiornaTipo()
+        {
+            if (ListaCarrello.SelectedItem == null)
+            {
+                tipo.Text = "non acc.";
+                return;
+            }
+
+            string selezionato = ListaCarrello.SelectedItem.ToString();
+
+            foreach (Prodotto p in c.Lista)
+            {
+                if (p.Id == selezionato)
+                {
+                    if (p is ProdottoElettronico)
+                    {
+                        tipo.Text = "Elettronico";
+                    }
+                    else if (p is ProdottoAlimentare)
+                    {
+                        tipo.Text = "Alimentare";
+                    }
+                    return;
+                }
+            }
+
+            tipo.Text = "non trovato";
+        }
         private void prezzo_tot_Click(object sender, EventArgs e)
         {
 
@@ -203,12 +264,18 @@ namespace e_commerce_carrello_lista
 
         private void ListaCarrello_SelectedIndexChanged(object sender, EventArgs e)
         {
-
+            prezzosingolo();
         }
 
         private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
-            
+
+        }
+
+        private void label7_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }
+   

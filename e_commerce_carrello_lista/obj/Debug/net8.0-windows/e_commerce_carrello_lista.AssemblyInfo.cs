@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("e_commerce_carrello_lista")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+add866a08f801b68de9c134bc95f3ad49d0f0bc9")]
 [assembly: System.Reflection.AssemblyProductAttribute("e_commerce_carrello_lista")]
 [assembly: System.Reflection.AssemblyTitleAttribute("e_commerce_carrello_lista")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

@@ -49,9 +49,10 @@ namespace CarrelloLista
             if (prodottoDaRimuovere != null)
                 lista.Remove(prodottoDaRimuovere);
             */
-            int trovato;
+            /*int trovato;
             trovato = lista.IndexOf(p);
-            if (trovato != -1) lista.RemoveAt(trovato);
+            if (trovato != -1) lista.RemoveAt(trovato);*/
+            lista.Remove(p);
         }
 
         public void svuotaProdotti()
