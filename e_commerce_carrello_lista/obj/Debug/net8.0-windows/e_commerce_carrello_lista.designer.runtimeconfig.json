@@ -12,9 +12,8 @@
       }
     ],
     "additionalProbingPaths": [
-      "C:\\Users\\fusco.22376\\.dotnet\\store\\|arch|\\|tfm|",
-      "C:\\Users\\fusco.22376\\.nuget\\packages",
-      "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+      "C:\\Users\\diana\\.dotnet\\store\\|arch|\\|tfm|",
+      "C:\\Users\\diana\\.nuget\\packages"
     ],
     "configProperties": {
       "System.Runtime.Serialization.EnableUnsafeBinaryFormatterSerialization": true,

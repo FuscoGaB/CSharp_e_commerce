@@ -29,7 +29,6 @@ namespace e_commerce_carrello_lista
         {
 
         }
-
         public void aggiungi_Click(object sender, EventArgs e)
         {
             //non aggiunge prodotti "invisibili"
@@ -39,9 +38,6 @@ namespace e_commerce_carrello_lista
                 return;
             }
 
-            string prodottoId = textBox1.Text;
-            Prodotto p = null;
-
             if (comboBox1.SelectedItem == null)
             {
                 MessageBox.Show("seleziona un tipo di prodotto.");
@@ -49,22 +45,25 @@ namespace e_commerce_carrello_lista
             }
 
             string tipoProdotto = comboBox1.SelectedItem.ToString();
+            string prodottoId = textBox1.Text;
+            Prodotto p = null;
 
             // Crea il prodotto in base al tipo selezionato
             if (tipoProdotto == "Elettronico")
             {
-                p = new ProdottoElettronico(prodottoId, " -E", "MarcaElettronico", 100);
+                p = new ProdottoElettronico(prodottoId, " Ele", "MarcaElettronico", 100);
                 TTipo = "Elettronico";
 
             }
             else if (tipoProdotto == "Alimentare")
             {
-                p = new ProdottoAlimentare(prodottoId, " -A", "MarcaAlimentare", 100);
+                p = new ProdottoAlimentare(prodottoId, " Ali", "MarcaAlimentare", 100);
                 TTipo = "Alimentare";
             }
 
             if (p != null)
             {
+                modificaPrezzo();
                 double sconto = p.CalcolaSconto();
                 double prezzoSconto = p.Prezzo - sconto;
                 pScontato += prezzoSconto;
@@ -213,10 +212,10 @@ namespace e_commerce_carrello_lista
             string selezionato = ListaCarrello.SelectedItem.ToString();
 
             if (selezionato != null)
-            { 
+            {
                 foreach (Prodotto p in c.Lista)
                 {
-                    if (p.Id == selezionato) 
+                    if (p.Id == selezionato)
                     {
                         double sconto = p.CalcolaSconto();
                         double prezzoScontato = p.Prezzo - sconto;
@@ -227,7 +226,7 @@ namespace e_commerce_carrello_lista
                     }
                 }
             }
-            
+
         }
         private void aggiornaTipo()
         {
@@ -239,23 +238,24 @@ namespace e_commerce_carrello_lista
 
             string selezionato = ListaCarrello.SelectedItem.ToString();
 
-            foreach (Prodotto p in c.Lista)
+            if (selezionato != null)
             {
-                if (p.Id == selezionato)
+                foreach (Prodotto p in c.Lista)
                 {
-                    if (p is ProdottoElettronico)
+                    if (p.Id == selezionato)
                     {
-                        tipo.Text = "Elettronico";
+                        if (p is ProdottoElettronico)
+                        {
+                            tipo.Text = "Elettronico";
+                        }
+                        else if (p is ProdottoAlimentare)
+                        {
+                            tipo.Text = "Alimentare";
+                        }
+                        return;
                     }
-                    else if (p is ProdottoAlimentare)
-                    {
-                        tipo.Text = "Alimentare";
-                    }
-                    return;
                 }
             }
-
-            tipo.Text = "non trovato";
         }
         private void prezzo_tot_Click(object sender, EventArgs e)
         {
@@ -265,6 +265,7 @@ namespace e_commerce_carrello_lista
         private void ListaCarrello_SelectedIndexChanged(object sender, EventArgs e)
         {
             prezzosingolo();
+            aggiornaTipo();
         }
 
         private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
@@ -276,6 +277,28 @@ namespace e_commerce_carrello_lista
         {
 
         }
+
+        /*private void modificaPrezzo()
+        {
+            // Controllo txt box...
+            string prodottoId = textBox1.Text;
+            // Cerca il prodotto nella lista del carrello
+            Prodotto prodottoDaModificare = null;
+            foreach (Prodotto p in c.Lista)
+            {
+                if (p.Id == prodottoId)
+                {
+                    prodottoDaModificare = p;
+                    break;
+                }
+            }
+            // Se prodotto non esiste errore...
+            // Imposta un nuovo prezzo fisso per il test
+            prodottoDaModificare.Prezzo = 50.0;
+            MessageBox.Show($"Prezzo del prodotto '{prodottoDaModificare.Id}' aggiornato a {prodottoDaModificare.Prezzo}.");
+            aggiornaPrezzoProdotti();
+        }
+*/
     }
 }
    
